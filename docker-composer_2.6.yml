@@ -1,0 +1,30 @@
+# version: '2.4'
+version: '2.6'
+
+services:
+ yolov8_openstreet: 
+  build:
+    context: . # Directory containing the Dockerfile
+    dockerfile: Dockerfile #Name of the Dockerfile, if different
+  devices:
+    - /dev/nvidia0:/dev/nvidia0
+  shm_size: '2gb'
+  ports:
+    - "5000:5000" # Expose port 5000 on the host and container
+  volumes:
+    - .:/workspace #mount the current directory to /workspace in the container
+  environment:
+    # - Env=development # Example environment variable
+    - TZ=Asia/Tokyo
+    - JUPYTER_ENABLE_LAB=yes
+    - NVIDIA_VISIBLE_DEVICES=all
+  tty: true
+  # runtime: nvidia
+  deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
