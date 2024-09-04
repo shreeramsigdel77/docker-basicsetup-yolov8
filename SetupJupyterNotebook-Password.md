@@ -4,6 +4,8 @@ Installation of docker and establishment of a container
 
 Make sure the port not being used
 
+sudo ss -tuln
+
 # Setting up Password for Jupyter notebook
 
 
@@ -69,3 +71,7 @@ http://localhost:5000/
     ```
     http://hostmachine_ip:5000/
     ```
+
+Resolving the issue of jupyter lab using 8888 port 
+
+on vscode docker exec -it docker-container-name curl http://localhost:5000 
