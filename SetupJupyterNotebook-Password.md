@@ -4,10 +4,7 @@ Installation of docker and establishment of a container
 
 Make sure the port not being used
 
-sudo ss -tuln
-
 # Setting up Password for Jupyter notebook
-
 
 1. Start your docker container and exec to terminal. Here docker_test-yolov8_test_docker-1 is container name
 
@@ -60,7 +57,12 @@ c.NotebookApp.port = 5000
    ```
    sh launch.sh
    ```
-9. Open webbrowser and hit the url (make sure to use appropriate port) and enter password to login
+9. Access jupyter notebook on local machine with port forwarding
+
+   ssh -L 5000:localhost:5000 username@vpn-server-ip
+
+   e.g ssh -L 5000:localhost:5000 shree-gpu@172.16.XX.XX
+10. Open webbrowser and hit the url (make sure to use appropriate port) and enter password to login
 
 ```
 http://localhost:5000/
@@ -72,6 +74,17 @@ http://localhost:5000/
     http://hostmachine_ip:5000/
     ```
 
-Resolving the issue of jupyter lab using 8888 port 
+Additional
 
-on vscode docker exec -it docker-container-name curl http://localhost:5000 
+check if docker is running or not
+
+docker ps
+
+if not
+
+docker run -d -p 5000:5000 <image_name>
+
+or simpley sh launch.sh
+
+2. Verify server's IP  and port accessibility
+3.
