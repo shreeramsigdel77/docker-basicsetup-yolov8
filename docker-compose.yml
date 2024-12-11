@@ -1,16 +1,15 @@
-# version: '2.4'
 version: '2.6'
 
 services:
- yolov8_openstreet: 
+ wadaden_docker_yolov8v2.6: 
   build:
     context: . # Directory containing the Dockerfile
     dockerfile: Dockerfile #Name of the Dockerfile, if different
   devices:
     - /dev/nvidia0:/dev/nvidia0
-  shm_size: '2gb'
+  shm_size: '2gb'   #leads to numpycore memory error
   ports:
-    - "5000:5000" # Expose port 5000 on the host and container
+    - "8877:8877" # check port availability and Expose port on the host and container
   volumes:
     - .:/workspace #mount the current directory to /workspace in the container
   environment:
@@ -27,4 +26,3 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-
