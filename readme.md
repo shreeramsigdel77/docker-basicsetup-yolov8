@@ -1,12 +1,11 @@
-1. Install docker
-2. Create Docker file
-3. create docker-compose.yml
-4. build the docekr : Makesure docker version is correct within docker-compose.yml file
+Note: if you are using over VPN dont forget to expose port through powershell in windows.
+
+Instllation Guide:
+
+1. Launch launch.sh
 
    ```
-   docker-compose up --build
-
+   . launch.sh
    ```
-5. Access the services by
-
-   http://`<host-ip>:5000`
+2. Open GroundingDino_installation_only notebook and install all
+3. Open GroundingDino.ipynb  to auto annotate and train yolov8 model.

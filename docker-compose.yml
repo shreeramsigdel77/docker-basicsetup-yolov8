@@ -1,7 +1,7 @@
 version: '2.6'
 
 services:
- wadaden_docker_yolov8v2.6: 
+ python10_yolov8: 
   build:
     context: . # Directory containing the Dockerfile
     dockerfile: Dockerfile #Name of the Dockerfile, if different
@@ -9,7 +9,7 @@ services:
     - /dev/nvidia0:/dev/nvidia0
   shm_size: '2gb'   #leads to numpycore memory error
   ports:
-    - "8877:8877" # check port availability and Expose port on the host and container
+    - "5055:5055" # check port availability and Expose port on the host and container
   volumes:
     - .:/workspace #mount the current directory to /workspace in the container
   environment:

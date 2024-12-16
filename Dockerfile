@@ -1,55 +1,51 @@
-# Based NGC pytorch 21.10
-FROM nvcr.io/nvidia/pytorch:21.10-py3
+FROM laineil/jupyter-base-notebook:python-3.10-cuda-12.1-base-rocky8
+
+# Ensure commands run as root
+USER root
 
 # Configuring tzdata for docker freeze
 ENV TZ=Asia/Tokyo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Prepare install
-RUN apt-get -y update && apt-get -y upgrade
+# Update package list and install dependencies using dnf
+RUN dnf update -y && dnf install -y \
+    wget \
+    python3-pip \
+    nano \
+    sudo && \
+    dnf clean all && rm -rf /var/cache/dnf
 
-# Add the following line to get native library of OpenCV.
-# RUN apt-get install -y libopencv-dev
-# 必要なシステムパッケージをインストール
-RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends \
-    libopencv-dev nano sudo && \
-    rm -rf /var/lib/apt/lists/*
-
-
-
-# Install yolov8
-RUN pip install ultralytics==8.0.81
-
-# Install OpenCV (c++)
-# Configure Version (yolov8 need cv < 4.3)
-RUN pip install "opencv-python-headless<4.3"
-
-# Update pytorch for cuda=11.4 (https://github.com/pytorch/pytorch/issues/75992#issuecomment-1102959704)
-# yolov8 need torch > 10.1
-RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu113
+# Install pytorch with CUDA support
+RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 ENV PYTHONIOENCODING=utf8
 
 # Expose port for Jupyter Notebook
-EXPOSE 8877   #makesure the port is available
+EXPOSE 5055
+
+# Create sudo group and a new user with sudo permissions
+RUN groupadd --gid 2000 sudo && \
+     groupadd --gid 2001 user && \
+     useradd --uid 2000 --gid 2001 -m user && \
+     usermod -aG sudo user && \
+     echo "user ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/user && chmod 0440 /etc/sudoers.d/user
 
 
-# 新規ユーザを作成して sudo 権限を付与
-RUN groupadd --gid 1000 user && \
-    useradd --uid 1000 --gid 1000 -m user && \
-    usermod -aG sudo user && \
-    echo "user ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/user && \
-    chmod 0440 /etc/sudoers.d/user
-
+# Ensure user has proper ownership and global permissions for home and workspace directories
+RUN mkdir -p /workspace && \
+     chown -R user:user /workspace && \
+     chmod -R 777 /workspace && \
+     chown -R user:user /home/user /home/jovyan && \
+     chmod -R 777 /home/user /home/jovyan
 
 # Set the working directory
 WORKDIR /workspace
-RUN chown -R 1000:1000 /workspace
 
-# ユーザを切り替え
+# Copy to install packages
+COPY . /workspace
+
+# Switch to user
 USER user
 
-
 # Command to start Jupyter Notebook
-CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8877", "--no-browser", "--allow-root", "--NotebookApp.token=''"]
+CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=5055", "--no-browser", "--allow-root", "--NotebookApp.token=''"]

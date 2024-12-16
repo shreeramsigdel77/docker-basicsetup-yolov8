@@ -18,6 +18,14 @@
 # sudo chmod +x /usr/local/bin/docker-compose
 
 
-docker-compose build # --no-cache # if any trouble some, enable --no-cache
+# Stop and remove any existing containers
+docker-compose down
+
+# Rebuild the image with no cache
+docker-compose build --no-cache
+
+# Start the container
 docker-compose up -d
-docker-compose exec yolov8_test_docker /bin/bash
+
+# Optional: Access the container
+docker-compose exec python10_yolov8 /bin/bash
